@@ -1,0 +1,56 @@
+spring:
+  http:
+    multipart:
+      max-file-size: 1024MB
+      max-request-size: 1024MB
+      resolve-lazily: true
+  jackson:
+      date-format: yyyy-MM-dd HH:mm:ss
+      time-zone: GMT+8
+  aop:
+      proxy-target-class: true
+# mybatis配置
+mybatis:
+  # mybatis配置文件路径
+  config-location: classpath:mybatis-config.xml
+# logback配置
+logging:
+  config: classpath:logback-${spring.profiles.active}.xml
+
+# 默认配置
+default:
+  headimg: http://api.jbd.melonmobile.cn/cdn/resource/usr_ico_default.png
+  test_mobile: 17723267692,18996341035,15730102995,15710060091,17600132399,13628324343,18054216614,13271830305,18523381576,18523386927,13187500025,18257462802,13072881805
+
+#资源文件访问虚拟相对路径（不同项目不需修改）
+CDN_RESOURCE_DIR_RELATIVE: /cdn/resource/loan/changrun/
+
+#资源文件存储磁盘路径（不同项目的项目名称如purelifev2需要修改）
+CDN_RESOURCE_DIR_DISK: /var/cdn/resource/loan/changrun/
+
+
+
+#优雅杀进程
+management:
+  security:
+    enabled: true
+  port: ${tomcat.port}
+  address: 127.0.0.1
+  context-path: /admin
+endpoints:
+  shutdown:
+    enabled: true
+    path: /shutdown
+security:
+  basic:
+    enabled: true
+    path: /admin
+  user:
+    name: root
+    password: 123456
+
+#测试账号
+TEST_MOBILES: 17723267692,18996341035,15730102995,15710060091,17600132399,13628324343,18054216614,13271830305,18523381576,18523386927,13187500025,18257462802,17602317329,18696781707,13300001000,13300001001,13300001002,13300002000,13300002001,13300002002,13300003000,13300003001,13300003002,15223383017,13072881805
+
+#默认头像
+DEFAULT_HEADIMG: http://api.jbd.melonmobile.cn/cdn/resource/usr_ico_default.png

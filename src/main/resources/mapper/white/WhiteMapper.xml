@@ -1,0 +1,225 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.wangtao.web.shop.whiteboard.dao.WhiteMapper">
+    <select id="isHaveBorrowInfo" parameterType="map" resultType="map">
+       select *  from borrow_info ib WHERE userId=#{userId}
+         <if test="borrowId!=null and borrowId!=''">
+             AND  borrowId=#{borrowId}
+         </if>
+         ORDER BY  borrowId DESC  limit 1;
+    </select>
+    <select id="serviceStatus" parameterType="map" resultType="map">
+        SELECT a.*,ifnull(b.certifyStatus,-1) certifyStatus
+        FROM (select serviceId,serviceType from company_buy_service
+        WHERE companyId=#{companyId} AND unix_timestamp(now()) &gt;= beginTimeStamp AND unix_timestamp(now())&lt;endTimeStamp) a
+        LEFT JOIN (select serviceId,certifyStatus from user_certify_status ucs
+        WHERE ucs.userId=#{userId}) b ON  a.serviceId=b.serviceId
+    </select>
+    <insert id="addBorrowInfo" parameterType="map" useGeneratedKeys="true" keyProperty="borrowId" keyColumn="borrowId">
+        INSERT INTO borrow_info (
+        userId,
+        createDay,
+        borrowAmount,
+        isAgreement,
+        purposeName,
+        companyId,
+        borrowStatus,
+        auditStatus,
+        createTime
+        ) VALUES  (
+        #{userId},
+        DATE_FORMAT(now(),'%Y%m%d'),
+        #{borrowAmount},
+        1,
+        #{purposeName},
+        #{companyId},
+        #{borrowStatus},
+        0,
+        now()
+        )
+    </insert>
+
+    <select id="getConfig" parameterType="map" resultType="map">
+        select dictKey,dictValue from sys_dict_info WHERE companyId=#{companyId} AND dictField=#{dictField};
+    </select>
+    <update id="updateBorrowInfo" parameterType="map" >
+        <selectKey keyProperty='borrowId' resultType='int' order='BEFORE'>
+            SELECT borrowId FROM  borrow_info WHERE  userId=#{userId} ORDER BY borrowId DESC  limit 1
+        </selectKey>
+        UPDATE
+        borrow_info  bi
+        SET
+        <if test="policeBirthBate!=null  ">
+            bi.age=year(from_days( datediff( now( ),#{policeBirthBate}))),
+        </if>
+        <if test=" cityCode!=null ">
+            bi.cityCodeCard=#{cityCode},
+        </if>
+        <if test="  cityCodeCurrent!=null ">
+            bi.cityCodeCurrent=#{cityCodeCurrent},
+        </if>
+        <if test="  contactWeixin!=null ">
+            bi.contactWeixin=#{contactWeixin},
+        </if>
+        <if test="  contactQQ!=null ">
+            bi.contactQQ=#{contactQQ},
+        </if>
+        <if test=" borrowStatus!=null  ">
+            bi.borrowStatus=#{borrowStatus},
+        </if>
+        <if test=" auditStatus!=null  ">
+            bi.auditStatus=#{auditStatus},
+        </if>
+        <if test="  admUserId!=null ">
+            bi.admUserId=#{admUserId},
+        </if>
+        <if test="  zmScore!=null ">
+            bi.score=#{zmScore},
+        </if>
+        <if test="  reviewId!=null ">
+            bi.reviewId=#{reviewId},
+        </if>
+
+        bi.updateTime=now()
+        WHERE borrowId=#{borrowId}
+    </update>
+    <select id="getIDcCardCityCode" parameterType="map" resultType="String">
+        select cityCode from area_district WHERE districtCode=#{districtCode};
+    </select>
+    <select id="getUserCertifyStatus" parameterType="map" resultType="map">
+        select *  from user_certify_status  WHERE userId=#{userId} AND  serviceId in (2,3) AND certifyStatus IN (0,1)
+        AND now()&lt; expiryDateTime
+    </select>
+    <select id="slePushUser" parameterType="map" resultType="map">
+                select awc.workConfigId,ifnull(acc.weixin,au.admUserMobile) weixin,awc.admUserId,
+                CASE WHEN
+                awc.workStatus=1
+                AND  find_in_set(date_format(curdate(),'%w'),awc.weekDays) &gt;0
+                AND date_format(NOW(),'%H:%i') BETWEEN awc.workStartTime AND  awc.workEndTime
+                THEN 1
+                ELSE 0 END AS workStatus
+                  from borrow_info bi
+                LEFT JOIN company_subscribe cs ON  cs.companyId =bi.companyId
+                INNER JOIN adm_work_config awc ON cs.companyId=awc.companyId
+                LEFT JOIN adm_concat_config acc ON acc.admUserId=awc.admUserId
+
+                INNER JOIN adm_assigns_config aac ON aac.admUserId=awc.admUserId AND aac.assignsNum>0
+                INNER JOIN adm_user au ON au.admUserId = awc.admUserId
+                LEFT JOIN (select COUNT(1) num,admUserId  from borrow_info WHERE companyId=#{companyId} AND createDay=DATE_FORMAT(NOW(),'%Y%m%d') GROUP BY admUserId,createDay) dayNum ON dayNum.admUserId=awc.admUserId
+                WHERE  bi.borrowId=#{borrowId}
+                AND au.admUserStatus=1 AND au.isDeleted=0 AND au.isSystem=0
+                AND (dayNum.num&lt;aac.assignsNum OR dayNum.num IS NULL )
+                AND cs.ageLevelMin&lt;=bi.age
+                AND cs.ageLevelMax&gt;=bi.age
+                AND cs.zmLevelMin&lt;=bi.score
+                AND cs.zmLevelMax&gt;=bi.score
+                <if test="areasType==1">
+                 AND ( (cs.provinceCodes = 0 AND cs.cityCodes=0 ) OR find_in_set(ifnull(getProvinceCode(#{cityCodeCard}),0),cs.provinceCodes)>0 OR find_in_set(#{cityCodeCard},cs.cityCodes)>0 )
+                </if>
+                <if test="areasType==2">
+                    AND ((cs.provinceCodes = 0 AND cs.cityCodes=0 ) OR find_in_set(ifnull(getProvinceCode(#{cityCodeCurrent}),0),cs.provinceCodes)>0 OR find_in_set(#{cityCodeCurrent},cs.cityCodes)>0)
+                </if>
+                <if test="areasType==3">
+                    AND ((cs.provinceCodes = 0 AND cs.cityCodes=0 ) OR find_in_set(ifnull(getProvinceCode(#{cityCodeCard}),0),cs.provinceCodes)>0 OR find_in_set(#{cityCodeCard},cs.cityCodes)>0
+                     OR find_in_set(ifnull(getProvinceCode(#{cityCodeCurrent}),0),cs.provinceCodes)>0 OR find_in_set(#{cityCodeCurrent},cs.cityCodes)>0
+                    )
+                </if>
+                <if test="creditAsset==0">
+                AND 1=1
+                </if>
+                <if test="creditAsset==1">
+                AND #{isPublicFund}&gt;=1
+                    AND #{isLocalSecurity}&gt;=1
+                </if>
+                <if test="creditAsset==2">
+                AND (#{isPublicFund}&gt;=1 OR #{isLocalSecurity}&gt;=1 )
+                </if>
+                <if test="creditAsset==3">
+                    AND #{isPublicFund}&gt;=1
+                </if>
+        ORDER BY
+        CASE WHEN
+        awc.workStatus=1
+        AND  find_in_set(date_format(curdate(),'%w'),awc.weekDays) &gt;0
+        AND date_format(NOW(),'%H:%i') BETWEEN awc.workStartTime AND  awc.workEndTime
+        THEN 1
+        ELSE 0 END   DESC ,field(awc.workConfigId,${admWorkConfigIds})
+        limit 1
+
+    </select>
+
+    <select id="companySubscribe" parameterType="map" resultType="map">
+        select * from company_subscribe WHERE companyId=#{companyId}
+    </select>
+
+    <select id="getAdmWorkConfigIds" parameterType="map" resultType="String">
+        SELECT GROUP_CONCAT(workConfigId) workConfigIds FROM adm_work_config WHERE companyId=#{companyId}
+    </select>
+    <select id="selCompanyFlowInfo" parameterType="map" resultType="map">
+        SELECT nextStatus borrowStatus FROM company_flow_info WHERE beginBorrowStatus=0
+        AND beginAuditStatus=0 and
+        nextAuditStatus=#{auditStatus} AND companyId=#{companyId}
+    </select>
+    <insert id="insertBorrowreviewlog" parameterType="map" useGeneratedKeys="true" keyProperty="reviewId" keyColumn="reviewId">
+        INSERT INTO borrow_review_log (
+        userId,
+        admUserId,
+        companyId,
+        borrowId,
+        borrowStatus,
+        auditStatus,
+        remark,
+        createTime
+        ) VALUES  (
+        #{userId},
+        0,
+        #{companyId},
+        #{borrowId},
+        #{borrowStatus},
+        #{auditStatus},
+        #{remark},
+        now()
+        )
+    </insert>
+
+    <resultMap id="allDistrict" type="java.util.Map">
+        <id column="provinceCode" property="provinceCode" />
+        <result column="provinceName" property="provinceName" />
+        <collection property="cities" column="provinceCode" ofType="map" javaType="java.util.ArrayList" >
+            <id column="cityCode" property="cityCode" />
+            <result column="cityName" property="cityName" />
+            <result column="areaCode" property="areaCode" />
+            <collection property="district" column="cityCode" ofType="map" javaType="java.util.ArrayList" >
+                <id column="districtCode" property="districtCode" />
+                <result column="districtName" property="districtName" />
+            </collection>
+        </collection>
+    </resultMap>
+
+    <select id="getAllDistrict" resultMap="allDistrict">
+        SELECT
+        ap.provinceCode,
+        ap.provinceName,
+        ac.cityCode,
+        ac.cityName,
+        ac.areaCode,
+        ad.districtCode,
+        ad.districtName
+        FROM
+        area_province ap
+        LEFT JOIN area_city ac ON ap.provinceCode = ac.provinceCode
+        LEFT JOIN area_district ad ON ac.cityCode = ad.cityCode
+    </select>
+
+    <select id="getUserMobile" parameterType="map" resultType="map">
+        SELECT  acc.weixin,
+        CASE WHEN awc.workStatus=1
+        AND  find_in_set(date_format(curdate(),'%w'),awc.weekDays) &gt;0
+        AND date_format(NOW(),'%H:%i') BETWEEN awc.workStartTime AND  awc.workEndTime
+        THEN 1 ELSE 0 END workStatus
+        FROM  borrow_info bi
+        LEFT  JOIN adm_concat_config acc ON  bi.admUserId=acc.admUserId
+        LEFT  JOIN adm_work_config awc ON bi.admUserId=awc.admUserId
+        WHERE  bi.borrowId=#{borrowId}
+    </select>
+</mapper>

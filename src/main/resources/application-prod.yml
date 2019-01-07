@@ -1,0 +1,45 @@
+# tomcat配置
+server:
+  port: 8082
+spring:
+  profiles:
+    include: common
+  redis:
+    database: 0
+    host: 127.0.0.1
+    port: 6379
+    password: foobaredtiangua$123
+    pool:
+      max-idle: 300
+      max-active: 600
+      max-wait: 1000
+    timeout: 0
+  datasource:
+    type: com.alibaba.druid.pool.DruidDataSource
+    url: jdbc:mysql://rm-bp1528u3b12hv7328jo.mysql.rds.aliyuncs.com:3306/changrun?useUnicode=true&characterEncoding=utf-8&zeroDateTimeBehavior=convertToNull&transformedBitIsBoolean=true
+    username: changrunjinkong
+    password: 98fFNwKGfxlGCnOs
+    driver-class-name: com.mysql.jdbc.Driver
+    filters: stat
+    maxActive: 500
+    initialSize: 2
+    maxWait: 60000
+    minIdle: 1
+    timeBetweenEvictionRunsMillis: 60000
+    minEvictableIdleTimeMillis: 300000
+    validationQuery: select 1
+    testWhileIdle: true
+    testOnBorrow: false
+    testOnReturn: false
+    poolPreparedStatements: true
+    maxOpenPreparedStatements: 20
+    logSlowSql: true
+
+#图片访问前缀
+CDN_RESOURCE_DIR_DOMAIN: http://static.jiebide.xin
+#tomcat端口
+tomcat:
+  port: 8082
+
+#同盾正式环境
+MOBILE_ENVIRONMENT: prd

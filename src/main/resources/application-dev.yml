@@ -38,4 +38,4 @@ spring:
 
 #tomcat端口
 tomcat:
-  port: 8882
+  port: 888

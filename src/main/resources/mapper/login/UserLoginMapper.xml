@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.wangtao.web.shop.login.dao.UserLoginMapper">
+    <select id="checkVertifyCode" parameterType="map" resultType="int">
+        SELECT COUNT(1) FROM  user_message_log
+        WHERE status=2 AND  now()&lt;DATA_ADD(createTime,INTERVAL 5 MINUTE )
+    </select>
+    <select id="oldUser" resultType="int" parameterType="map">
+        SELECT count(1) from USER  WHERE  userMobile=#{userMobile}
+    </select>
+    <select id="selUserInfo" resultType="map" parameterType="map">
+        SELECT * from USER  WHERE  userMobile=#{userMobile}
+    </select>
+    <insert id="insUser" parameterType="map">
+        INSERT INTO USER  (userMobile,createTime) VALUES (
+        #{userMobile},
+        now()
+        )
+    </insert>
+    <update id="updUser" parameterType="map">
+        UPDATE USER  SET  updateTime=now() WHERE
+        userMobile=#{userMobile}
+    </update>
+</mapper>

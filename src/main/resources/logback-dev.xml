@@ -40,7 +40,7 @@
 
 
     <!-- 将日志写入数据库 -->
-    <property resource="db.properties" />
+   <!-- <property resource="db.properties" />
     <appender name="DB" class="ch.qos.logback.classic.db.DBAppender">
         <filter class="ch.qos.logback.classic.filter.LevelFilter">
             <level>ERROR</level>
@@ -53,13 +53,13 @@
             <user>${dev.user}</user>
             <password>${dev.password}</password>
         </connectionSource>
-    </appender>
+    </appender>-->
 
     <!-- 控制台输出日志级别 -->
     <root level="INFO">
         <appender-ref ref="STDOUT" />
         <appender-ref ref="logback" />
-        <appender-ref ref="DB" />
+      <!--  <appender-ref ref="DB" />-->
     </root>
     <!-- 指定项目中某个包，当有日志操作行为时的日志记录级别 -->
     <!-- com.tml为根包，也就是只要是发生在这个根包下面的所有日志操作行为的权限都是DEBUG -->

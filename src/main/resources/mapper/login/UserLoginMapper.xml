@@ -3,22 +3,20 @@
 <mapper namespace="com.wangtao.web.shop.login.dao.UserLoginMapper">
     <select id="checkVertifyCode" parameterType="map" resultType="int">
         SELECT COUNT(1) FROM  user_message_log
-        WHERE status=2 AND  now()&lt;DATA_ADD(createTime,INTERVAL 5 MINUTE )
+        WHERE status=2 AND  now()&lt;DATE_ADD(createTime,INTERVAL 5 MINUTE ) AND mobileCode=#{mobileCode}
+        AND userMobile=#{userMobile}
     </select>
     <select id="oldUser" resultType="int" parameterType="map">
-        SELECT count(1) from USER  WHERE  userMobile=#{userMobile}
+        SELECT count(1) from user  WHERE  userMobile=#{userMobile}
     </select>
     <select id="selUserInfo" resultType="map" parameterType="map">
-        SELECT * from USER  WHERE  userMobile=#{userMobile}
+        SELECT * from user  WHERE  userMobile=#{userMobile}
     </select>
     <insert id="insUser" parameterType="map">
-        INSERT INTO USER  (userMobile,createTime) VALUES (
-        #{userMobile},
-        now()
-        )
+        INSERT INTO user  (userMobile,createTime) VALUES (  #{userMobile},  now()  )
     </insert>
     <update id="updUser" parameterType="map">
-        UPDATE USER  SET  updateTime=now() WHERE
+        UPDATE user  SET  updateTime=now() WHERE
         userMobile=#{userMobile}
     </update>
 </mapper>

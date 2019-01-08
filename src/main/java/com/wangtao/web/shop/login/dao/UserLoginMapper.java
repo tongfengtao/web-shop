@@ -6,9 +6,9 @@ import java.util.Map;
  * Created by Administrator on 2019/1/8.
  */
 public interface UserLoginMapper {
-    Integer checkVertifyCode(Map map);
+    int checkVertifyCode(Map map);
 
-    Integer oldUser(Map map);
+    int oldUser(Map map);
 
     Map selUserInfo(Map map);
 

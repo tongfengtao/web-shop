@@ -16,8 +16,8 @@ spring:
     timeout: 0
   datasource:
     #type: com.alibaba.druid.pool.DruidDataSource
-    url: jdbc:mysql://cdb-m0meojov.gz.tencentcdb.com:10036/daichao?useUnicode=true&characterEncoding=utf-8&zeroDateTimeBehavior=convertToNull&transformedBitIsBoolean=true
-    username: wangtao
+    url: jdbc:mysql://cdb-m0meojov.gz.tencentcdb.com:10036/shop?useUnicode=true&characterEncoding=utf-8&zeroDateTimeBehavior=convertToNull&transformedBitIsBoolean=true
+    username: shop
     password: zx516130780
     driver-class-name: com.mysql.jdbc.Driver
     filters: stat

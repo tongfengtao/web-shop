@@ -7,4 +7,5 @@ import java.util.Map;
  */
 public interface UserLoginService {
     Map userLogin(Map map);
+
 }

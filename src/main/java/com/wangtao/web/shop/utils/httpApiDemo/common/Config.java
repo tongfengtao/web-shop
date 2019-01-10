@@ -21,6 +21,11 @@ public class Config
 	public static final String AUTH_TOKEN = "1cbb35ae5feb4ebbae4ce5abac1291ab";
 
 	/**
+	 * 开发者注册后系统自动生成的TOKEN，可在官网登录后查看
+	 */
+	public static final String SMS_MOUDLE = "【网淘】尊敬的用户，您的验证码为{1}，请于5分钟内正确输入，如非本人操作，请忽略此短信。";
+
+	/**
 	 * 响应数据类型, JSON或XML
 	 */
 	public static final String RESP_DATA_TYPE = "json";

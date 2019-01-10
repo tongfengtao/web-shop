@@ -15,4 +15,10 @@ public interface UserLoginMapper {
     void updUser(Map map);
 
     void insUser(Map map);
+
+    int sendDayCount(Map map);
+
+    void insMessageLog(Map map);
+
+    int checkToken(Map map);
 }

@@ -8,4 +8,7 @@ import java.util.Map;
 public interface UserLoginService {
     Map userLogin(Map map);
 
+    Map sendMessage(Map map);
+
+    int checkToken(Map map);
 }

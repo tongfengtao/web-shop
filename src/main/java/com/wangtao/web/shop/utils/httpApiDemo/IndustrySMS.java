@@ -23,7 +23,7 @@ public class IndustrySMS
 	/**
 	 * 验证码通知短信
 	 */
-	public static void execute(String to,String smsContent)
+	public static String execute(String to,String smsContent)
 	{
 		String tmpSmsContent = null;
 	    try{
@@ -37,10 +37,11 @@ public class IndustrySMS
 
 	    // 提交请求
 	    String result = HttpUtil.post(url, body);
-	    System.out.println("result:" + System.lineSeparator() + result);
+	    return result;
 	}
 
 	public static void main(String[] args) {
-		execute("15223383017","【网淘】您的验证码为123456，请于5分钟内正确输入，如非本人操作，请忽略此短信。");
+		execute("15223383017",
+				"【网淘】尊敬的用户，您的验证码为1234，请于2分钟内正确输入，如非本人操作，请忽略此短信。");
 	}
 }

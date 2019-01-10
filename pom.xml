@@ -154,11 +154,11 @@
 		</dependency>-->
 
 		<!--分页插件-->
-		<!--<dependency>
+		<dependency>
 			<groupId>com.github.pagehelper</groupId>
 			<artifactId>pagehelper-spring-boot-starter</artifactId>
 			<version>1.2.3</version>
-		</dependency>-->
+		</dependency>
 
 		<!-- AOP surpport -->
 		<dependency>
@@ -197,11 +197,11 @@
 
 		</dependency>-->
 		<!-- 德鲁伊链接池 -->
-		<!--<dependency>
+		<dependency>
 			<groupId>com.alibaba</groupId>
 			<artifactId>druid</artifactId>
 			<version>1.1.5</version>
-		</dependency>-->
+		</dependency>
 		<!-- 德鲁伊链接池 -->
 		<!-- 工具包 -->
 		<dependency>
@@ -216,6 +216,12 @@
 			<groupId>commons-codec</groupId>
 			<artifactId>commons-codec</artifactId>
 			<version>1.10</version>
+		</dependency>
+		<!-- https://mvnrepository.com/artifact/org.apache.commons/commons-pool2 -->
+		<dependency>
+			<groupId>org.apache.commons</groupId>
+			<artifactId>commons-pool2</artifactId>
+			<version>2.4.2</version>
 		</dependency>
 
 	</dependencies>

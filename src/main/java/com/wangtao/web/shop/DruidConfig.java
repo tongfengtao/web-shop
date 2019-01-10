@@ -1,4 +1,4 @@
-/*
+
 package com.wangtao.web.shop;
 
 import com.alibaba.druid.pool.DruidDataSource;
@@ -14,12 +14,12 @@ import org.springframework.context.annotation.Primary;
 import javax.sql.DataSource;
 import java.sql.SQLException;
 
-*/
+
 /**
  * @project web_shop
  * @create by wangtao
  * @createTime 2019/1/7 22:21
- *//*
+ */
 
 @Configuration
 public class DruidConfig {
@@ -107,8 +107,7 @@ public class DruidConfig {
     public ServletRegistrationBean druidServlet() {
         ServletRegistrationBean reg = new ServletRegistrationBean();
         reg.setServlet(new StatViewServlet());
-        reg.addUrlMappings("/druid*/
-/*");
+        reg.addUrlMappings("/druid");
         reg.addInitParameter("loginUsername", username);
         reg.addInitParameter("loginPassword", password);
         reg.addInitParameter("logSlowSql", logSlowSql);
@@ -119,12 +118,10 @@ public class DruidConfig {
     public FilterRegistrationBean filterRegistrationBean() {
         FilterRegistrationBean filterRegistrationBean = new FilterRegistrationBean();
         filterRegistrationBean.setFilter(new WebStatFilter());
-        filterRegistrationBean.addUrlPatterns("*/
-/*");
-        filterRegistrationBean.addInitParameter("exclusions", "*.js,*.gif,*.jpg,*.png,*.css,*.ico,/druid*/
-/*");
+        filterRegistrationBean.addUrlPatterns("*");
+        filterRegistrationBean.addInitParameter("exclusions", "*.js,*.gif,*.jpg,*.png,*.css,*.ico,/druid/*");
         filterRegistrationBean.addInitParameter("profileEnable", "true");
         return filterRegistrationBean;
     }
 }
-*/
+
